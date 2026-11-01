@@ -6,6 +6,7 @@ import { useToast } from '../ui/Toast.jsx';
 import { useFoods } from '../../hooks/useFoods.js';
 import { formatTime } from '../../utils/dates.js';
 import { itemNutrition, mealTotals, formatQty, fmtKcal, fmtProtein } from '../../utils/nutrition.js';
+import { themeFor, themeVars } from './mealTheme.js';
 import styles from './MealSection.module.css';
 
 export function MealSection({ meal, actions }) {
@@ -15,6 +16,7 @@ export function MealSection({ meal, actions }) {
   const [editing, setEditing] = useState(null); // item | 'new' | null
   const listId = useId();
   const totals = mealTotals(meal, foodsById);
+  const { icon: Icon } = themeFor(meal.id);
 
   const removeItem = (item) => {
     const index = meal.items.findIndex((i) => i.id === item.id);
@@ -41,8 +43,16 @@ export function MealSection({ meal, actions }) {
   };
 
   return (
-    <article className={`${styles.meal} ${meal.eaten ? styles.isEaten : ''}`}>
+    <article
+      id={`meal-${meal.id}`}
+      className={`${styles.meal} ${meal.eaten ? styles.isEaten : ''}`}
+      style={themeVars(meal.id)}
+    >
       <header className={styles.header}>
+        <span className={styles.badge} aria-hidden="true">
+          <Icon size={20} strokeWidth={2} />
+        </span>
+
         <button
           type="button"
           className={styles.toggle}
@@ -58,7 +68,7 @@ export function MealSection({ meal, actions }) {
             <h3 className={styles.name}>{meal.name}</h3>
             <ChevronDown size={18} className={styles.chevron} aria-hidden="true" />
           </span>
-          <span className={`t-small t-muted ${styles.totals}`}>
+          <span className={`t-small ${styles.totals}`}>
             {fmtKcal(totals.kcal)} kcal · {fmtProtein(totals.protein)} g protein
           </span>
         </button>
@@ -69,20 +79,20 @@ export function MealSection({ meal, actions }) {
           aria-pressed={meal.eaten}
           onClick={() => actions.toggleEaten(meal.id)}
         >
-          <span className={styles.check}>{meal.eaten && <Check size={14} strokeWidth={2.5} />}</span>
-          {meal.eaten ? 'Eaten' : 'Mark eaten'}
+          <span className={styles.check}>{meal.eaten && <Check size={14} strokeWidth={3} />}</span>
+          <span className={styles.eatenLabel}>{meal.eaten ? 'Eaten' : 'Mark eaten'}</span>
         </button>
       </header>
 
       {!expanded && meal.items.length > 0 && (
-        <p className={`t-small t-muted ${styles.preview}`}>
+        <p className={`t-small ${styles.preview}`}>
           {meal.items.map((i) => foodsById[i.foodId]?.name ?? 'Unknown food').join(', ')}
         </p>
       )}
 
       <div id={listId} hidden={!expanded}>
         {meal.items.length === 0 ? (
-          <p className={`t-small t-muted ${styles.emptyMeal}`}>
+          <p className={`t-small ${styles.emptyMeal}`}>
             {meal.replaced ? 'Add what you ate instead.' : 'No foods in this meal.'}
           </p>
         ) : (
@@ -95,14 +105,14 @@ export function MealSection({ meal, actions }) {
                   <button type="button" className={`interactive ${styles.item}`} onClick={() => setEditing(item)}>
                     <span className={styles.itemMain}>
                       <span className={food ? undefined : styles.missing}>{food?.name ?? 'Deleted food'}</span>
-                      <span className="t-small t-muted">
+                      <span className={`t-small ${styles.qty}`}>
                         {formatQty(item, food)}
                         {food?.state === 'dry' ? ' dry' : ''}
                       </span>
                     </span>
                     <span className={styles.itemNums}>
                       <span className="t-numeral">{fmtKcal(n.kcal)}</span>
-                      <span className="t-small t-muted">{fmtProtein(n.protein)} g</span>
+                      <span className={`t-small ${styles.qty}`}>{fmtProtein(n.protein)} g</span>
                     </span>
                   </button>
                 </li>
@@ -112,16 +122,17 @@ export function MealSection({ meal, actions }) {
         )}
 
         <div className={styles.footer}>
-          <Button variant="secondary" size="sm" icon={<Plus />} onClick={() => setEditing('new')}>
+          <button type="button" className={`interactive ${styles.addBtn}`} onClick={() => setEditing('new')}>
+            <Plus size={16} strokeWidth={2.4} />
             Add food
-          </Button>
+          </button>
           {!meal.replaced && (
             <Button variant="ghost" size="sm" icon={<Shuffle />} onClick={replace}>
               Ate something else
             </Button>
           )}
           <label className={styles.timeField}>
-            <span className="t-small t-muted">Time</span>
+            <span className="t-small">Time</span>
             <input
               type="time"
               value={meal.time}

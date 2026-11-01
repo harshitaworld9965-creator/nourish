@@ -1,15 +1,16 @@
 import styles from './Meter.module.css';
 
 /**
- * Hairline progress bar. `value` is eaten, `planned` (optional) is shown as a
- * paler segment behind it so you can see what the rest of the day adds.
+ * Progress bar. `value` is eaten, `planned` (optional) shows as a paler
+ * segment behind it. Pass any CSS colour as `color`; size 'lg' is chunkier.
  */
-export function Meter({ value, planned, max, label }) {
+export function Meter({ value, planned, max, label, color = 'var(--color-accent)', size = 'md' }) {
   const pct = (n) => `${Math.min(100, Math.max(0, (n / max) * 100))}%`;
   const over = value > max;
   return (
     <div
-      className={styles.track}
+      className={`${styles.track} ${size === 'lg' ? styles.lg : ''}`}
+      style={{ '--meter': color }}
       role="meter"
       aria-label={label}
       aria-valuemin={0}

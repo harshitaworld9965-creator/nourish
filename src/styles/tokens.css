@@ -1,7 +1,7 @@
 /* Design tokens. Every colour, size and duration in the app comes from here. */
 
 :root {
-  /* Colour — from the brief */
+  /* Colour — base */
   --color-bg: #f6f4ef;
   --color-text: #242321;
   --color-text-muted: #88847d;
@@ -9,31 +9,58 @@
   --color-accent-2: #d9bfa5;
   --color-border: #e5e1d9;
 
-  /* Derived tints — kept few and named by role, not by shade */
-  --color-surface: #fbfaf7;          /* cards and sheets, one step lighter than bg */
-  --color-surface-sunken: #efece5;   /* inputs, inactive tracks */
-  --color-accent-soft: #e7ece6;      /* accent at ~15% for fills behind accent text */
-  --color-accent-strong: #5c7563;    /* accent hover/active, passes AA on bg for text */
+  /* Derived tints */
+  --color-surface: #fbfaf7;
+  --color-surface-sunken: #efece5;
+  --color-accent-soft: #e7ece6;
+  --color-accent-strong: #5c7563;
   --color-accent-2-soft: #f1e6da;
   --color-danger: #a3564c;
   --color-danger-soft: #f3e4e1;
   --color-on-accent: #f6f4ef;
 
+  /* Metric colours: each has a strong, a soft (backgrounds) and an ink (text on soft) */
+  --c-kcal: #2e7a68;
+  --c-kcal-soft: #dcede6;
+  --c-kcal-ink: #1f5a4c;
+
+  --c-protein: #8e4e73;
+  --c-protein-soft: #f1e0ea;
+  --c-protein-ink: #6e3858;
+
+  --c-water: #3d84b8;
+  --c-water-soft: #dceaf4;
+  --c-water-ink: #285f86;
+
+  /* Meal colours */
+  --c-breakfast: #e09a1f;
+  --c-breakfast-soft: #fbebc9;
+  --c-breakfast-ink: #8a5a06;
+
+  --c-lunch: #5f8a4e;
+  --c-lunch-soft: #e2edd6;
+  --c-lunch-ink: #3e6130;
+
+  --c-dinner: #4a5592;
+  --c-dinner-soft: #e1e3f2;
+  --c-dinner-ink: #323c74;
+
+  --c-snacks: #d0607a;
+  --c-snacks-soft: #f8e0e5;
+  --c-snacks-ink: #9b3a52;
+
   /* Type */
   --font-serif: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
   --font-sans: 'Instrument Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  /* Scale ≈ 1.2 (minor third) at phone width, widening on larger screens.
-     The display sizes use clamp() so headings breathe on desktop without
-     a media query per size. */
-  --text-xs: 0.75rem;                              /* 12 */
-  --text-sm: 0.875rem;                             /* 14 */
-  --text-md: 1rem;                                 /* 16 */
-  --text-lg: 1.125rem;                             /* 18 */
-  --text-xl: clamp(1.25rem, 1.1rem + 0.8vw, 1.5rem);      /* 20–24 */
-  --text-2xl: clamp(1.625rem, 1.35rem + 1.4vw, 2.125rem); /* 26–34 */
-  --text-3xl: clamp(2.125rem, 1.6rem + 2.6vw, 3.25rem);   /* 34–52 */
-  --text-4xl: clamp(2.75rem, 2rem + 4vw, 4.5rem);         /* 44–72 */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: clamp(1.25rem, 1.1rem + 0.8vw, 1.5rem);
+  --text-2xl: clamp(1.625rem, 1.35rem + 1.4vw, 2.125rem);
+  --text-3xl: clamp(2.125rem, 1.6rem + 2.6vw, 3.25rem);
+  --text-4xl: clamp(2.75rem, 2rem + 4vw, 4.5rem);
 
   --leading-tight: 1.1;
   --leading-snug: 1.3;
@@ -56,19 +83,17 @@
   --space-12: 3rem;
   --space-16: 4rem;
 
-  /* Page gutter grows with the viewport */
   --gutter: clamp(1rem, 4vw, 2.5rem);
   --content-max: 68rem;
   --reading-max: 38rem;
 
-  /* Radii — deliberately small: the brief asks for an editorial feel,
-     not rounded SaaS cards. Only controls and chips are fully rounded. */
+  /* Radii */
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
+  --radius-xl: 1.25rem;
   --radius-pill: 999px;
 
-  /* Borders & shadow — one hairline, one soft lift for sheets only */
   --border: 1px solid var(--color-border);
   --shadow-sheet: 0 -8px 32px rgba(36, 35, 33, 0.08);
   --shadow-float: 0 4px 24px rgba(36, 35, 33, 0.1);
@@ -85,7 +110,6 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
 
-  /* Focus */
   --focus-ring: 0 0 0 3px var(--color-accent-soft), 0 0 0 4px var(--color-accent);
 }
 

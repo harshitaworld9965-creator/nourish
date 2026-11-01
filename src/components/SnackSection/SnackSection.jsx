@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { Button } from '../ui/Button.jsx';
 import { ItemEditor } from '../ItemEditor/ItemEditor.jsx';
 import { useToast } from '../ui/Toast.jsx';
 import { useFoods } from '../../hooks/useFoods.js';
 import { SNACKS_ID, itemNutrition, itemsTotals, formatQty, fmtKcal, fmtProtein } from '../../utils/nutrition.js';
+import { themeFor, themeVars } from '../MealSection/mealTheme.js';
 import styles from '../MealSection/MealSection.module.css';
 
 /**
@@ -16,6 +16,7 @@ export function SnackSection({ snacks, actions }) {
   const toast = useToast();
   const [editing, setEditing] = useState(null); // item | 'new' | null
   const totals = itemsTotals(snacks, foodsById);
+  const { icon: Icon } = themeFor(SNACKS_ID);
 
   const removeItem = (item) => {
     const index = snacks.findIndex((i) => i.id === item.id);
@@ -27,12 +28,20 @@ export function SnackSection({ snacks, actions }) {
   };
 
   return (
-    <article className={styles.meal} aria-labelledby="snacks-title">
+    <article
+      id="meal-snacks"
+      className={`${styles.meal} ${snacks.length ? styles.isEaten : ''}`}
+      style={themeVars(SNACKS_ID)}
+      aria-labelledby="snacks-title"
+    >
       <header className={styles.header}>
+        <span className={styles.badge} aria-hidden="true">
+          <Icon size={20} strokeWidth={2} />
+        </span>
         <div className={styles.toggle}>
           <span className={styles.time}>Any time</span>
           <h3 id="snacks-title" className={styles.name}>Snacks &amp; extras</h3>
-          <span className={`t-small t-muted ${styles.totals}`}>
+          <span className={`t-small ${styles.totals}`}>
             {snacks.length
               ? `${fmtKcal(totals.kcal)} kcal · ${fmtProtein(totals.protein)} g protein`
               : 'Nothing added'}
@@ -40,9 +49,9 @@ export function SnackSection({ snacks, actions }) {
         </div>
       </header>
 
-      <p className={`t-small t-muted ${styles.note}`}>
-        Anything you eat between meals. It counts as soon as you add it.
-      </p>
+      {snacks.length === 0 && (
+        <p className={`t-small ${styles.note}`}>Anything you eat between meals. It counts as soon as you add it.</p>
+      )}
 
       {snacks.length > 0 && (
         <ul className={`ruled ${styles.items}`}>
@@ -54,11 +63,11 @@ export function SnackSection({ snacks, actions }) {
                 <button type="button" className={`interactive ${styles.item}`} onClick={() => setEditing(item)}>
                   <span className={styles.itemMain}>
                     <span className={food ? undefined : styles.missing}>{food?.name ?? 'Deleted food'}</span>
-                    <span className="t-small t-muted">{formatQty(item, food)}</span>
+                    <span className={`t-small ${styles.qty}`}>{formatQty(item, food)}</span>
                   </span>
                   <span className={styles.itemNums}>
                     <span className="t-numeral">{fmtKcal(n.kcal)}</span>
-                    <span className="t-small t-muted">{fmtProtein(n.protein)} g</span>
+                    <span className={`t-small ${styles.qty}`}>{fmtProtein(n.protein)} g</span>
                   </span>
                 </button>
               </li>
@@ -68,9 +77,10 @@ export function SnackSection({ snacks, actions }) {
       )}
 
       <div className={styles.footer}>
-        <Button variant="secondary" size="sm" icon={<Plus />} onClick={() => setEditing('new')}>
+        <button type="button" className={`interactive ${styles.addBtn}`} onClick={() => setEditing('new')}>
+          <Plus size={16} strokeWidth={2.4} />
           Add snack
-        </Button>
+        </button>
       </div>
 
       <ItemEditor

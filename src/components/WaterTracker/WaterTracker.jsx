@@ -1,5 +1,4 @@
-import { Minus, Plus } from 'lucide-react';
-import { Button } from '../ui/Button.jsx';
+import { Droplet, Minus, Plus } from 'lucide-react';
 import { Meter } from '../ui/Meter.jsx';
 import styles from './WaterTracker.module.css';
 
@@ -17,8 +16,13 @@ export function WaterTracker({ water, target, glass, onAdd }) {
   return (
     <section className={styles.water} aria-label="Water">
       <div className={styles.head}>
-        <h2 className={styles.name}>Water</h2>
-        <p className="t-small t-muted">
+        <h2 className={styles.name}>
+          <span className={styles.icon} aria-hidden="true">
+            <Droplet size={15} strokeWidth={2.2} />
+          </span>
+          Water
+        </h2>
+        <p className={styles.status}>
           {left > 0 ? `${left.toLocaleString('en-IN')} ml to go` : 'Target reached'}
         </p>
       </div>
@@ -28,7 +32,7 @@ export function WaterTracker({ water, target, glass, onAdd }) {
         <span className={styles.target}>/ {litres(target)} L</span>
       </p>
 
-      <Meter value={water} max={target} label="Water drunk" />
+      <Meter value={water} max={target} label="Water drunk" color="var(--c-water)" size="lg" />
 
       <div className={styles.row}>
         <ol className={styles.glasses} aria-hidden="true">
@@ -37,17 +41,19 @@ export function WaterTracker({ water, target, glass, onAdd }) {
           ))}
         </ol>
         <div className={styles.buttons}>
-          <Button
-            variant="ghost"
-            size="sm"
-            icon={<Minus />}
-            label={`Remove ${glass} ml`}
+          <button
+            type="button"
+            className={`interactive ${styles.minus}`}
             onClick={() => onAdd(-glass)}
             disabled={water === 0}
-          />
-          <Button variant="secondary" size="sm" icon={<Plus />} onClick={() => onAdd(glass)}>
+            aria-label={`Remove ${glass} ml`}
+          >
+            <Minus size={18} />
+          </button>
+          <button type="button" className={`interactive ${styles.add}`} onClick={() => onAdd(glass)}>
+            <Plus size={18} strokeWidth={2.4} />
             {glass} ml
-          </Button>
+          </button>
         </div>
       </div>
     </section>

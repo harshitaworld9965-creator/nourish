@@ -1,9 +1,13 @@
 .track {
   position: relative;
   height: 6px;
-  background: var(--color-surface-sunken);
+  background: rgba(36, 35, 33, 0.08);
   border-radius: var(--radius-pill);
   overflow: hidden;
+}
+
+.lg {
+  height: 12px;
 }
 
 .planned,
@@ -15,14 +19,18 @@
 }
 
 .planned {
-  background: var(--color-accent-2-soft);
-  box-shadow: inset 0 0 0 1px var(--color-accent-2);
+  background: color-mix(in srgb, var(--meter) 28%, transparent);
 }
 
 .fill {
-  background: var(--color-accent);
+  background: var(--meter);
 }
 
+/* Over target: diagonal stripes so it's obvious at a glance */
 .over {
-  background: var(--color-accent-2);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--meter) 0 6px,
+    color-mix(in srgb, var(--meter) 65%, #000) 6px 12px
+  );
 }

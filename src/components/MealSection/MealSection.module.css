@@ -1,18 +1,43 @@
+/* Each meal sets --meal, --meal-soft and --meal-ink (see mealTheme.js) */
 .meal {
-  padding-block: var(--space-5);
-  border-top: 1px solid var(--color-text);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 5px solid var(--meal);
+  border-radius: var(--radius-xl);
+  scroll-margin-top: var(--space-6);
+  transition:
+    background-color var(--duration-slow) var(--ease-out),
+    border-color var(--duration-slow) var(--ease-out);
+}
+
+.isEaten {
+  background: var(--meal-soft);
+  border-color: transparent;
+  border-top-color: var(--meal);
 }
 
 .header {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--space-3);
+}
+
+.badge {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--meal);
+  color: #fff;
+  flex-shrink: 0;
 }
 
 .toggle {
   display: grid;
-  gap: var(--space-1);
+  gap: 2px;
   text-align: left;
   min-width: 0;
   flex: 1;
@@ -20,12 +45,14 @@
 
 .time {
   font-size: var(--text-sm);
-  color: var(--color-accent-strong);
+  font-weight: 600;
+  color: var(--meal-ink);
   font-variant-numeric: tabular-nums;
 }
 
 .changed {
-  color: var(--color-text-muted);
+  font-weight: 400;
+  opacity: 0.8;
 }
 
 .titleRow {
@@ -43,7 +70,7 @@
 }
 
 .chevron {
-  color: var(--color-text-muted);
+  color: var(--meal-ink);
   transition: transform var(--duration-base) var(--ease-out);
 }
 
@@ -52,14 +79,17 @@
 }
 
 .totals {
+  color: var(--meal-ink);
   font-variant-numeric: tabular-nums;
 }
 
 .note {
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
   max-width: var(--reading-max);
+  color: var(--meal-ink);
 }
 
+/* Eaten toggle */
 .eaten {
   display: inline-flex;
   align-items: center;
@@ -68,14 +98,14 @@
   padding: 0 var(--space-3) 0 var(--space-2);
   border-radius: var(--radius-pill);
   font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
+  font-weight: 600;
+  color: var(--meal-ink);
+  border: 1.5px solid var(--meal);
   flex-shrink: 0;
 }
 
 .eaten:hover {
-  border-color: var(--color-text-muted);
-  color: var(--color-text);
+  background: var(--meal-soft);
 }
 
 .check {
@@ -84,32 +114,34 @@
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 50%;
-  border: 1px solid currentColor;
+  border: 1.5px solid currentColor;
 }
 
 .eaten[aria-pressed='true'] {
-  background: var(--color-accent-soft);
-  border-color: transparent;
-  color: var(--color-accent-strong);
+  background: var(--meal);
+  border-color: var(--meal);
+  color: #fff;
 }
 
 .eaten[aria-pressed='true'] .check {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--color-on-accent);
-}
-
-.isEaten .name {
-  color: var(--color-text-muted);
+  background: #fff;
+  border-color: #fff;
+  color: var(--meal);
 }
 
 .preview {
-  margin-top: var(--space-2);
+  margin: var(--space-3) 0 0 calc(2.75rem + var(--space-3));
   max-width: var(--reading-max);
+  color: var(--meal-ink);
 }
 
+/* Items */
 .items {
   margin-top: var(--space-4);
+}
+
+.items > li + li {
+  border-top: 1px solid color-mix(in srgb, var(--meal) 22%, transparent);
 }
 
 .item {
@@ -121,17 +153,26 @@
   margin-inline: calc(var(--space-2) * -1);
   padding: var(--space-3) var(--space-2);
   text-align: left;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
 }
 
 .item:hover {
-  background: var(--color-surface-sunken);
+  background: color-mix(in srgb, var(--meal) 10%, transparent);
 }
 
 .itemMain {
   display: grid;
   gap: 2px;
   min-width: 0;
+}
+
+.qty {
+  color: var(--color-text-muted);
+}
+
+.isEaten .qty {
+  color: var(--meal-ink);
+  opacity: 0.8;
 }
 
 .missing {
@@ -148,27 +189,47 @@
 
 .emptyMeal {
   padding: var(--space-4) 0;
+  color: var(--meal-ink);
 }
 
+/* Footer */
 .footer {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2) var(--space-3);
   margin-top: var(--space-4);
+}
+
+.addBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 2.25rem;
+  padding: 0 var(--space-4) 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--meal);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.addBtn:hover {
+  background: var(--meal-ink);
 }
 
 .timeField {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  color: var(--meal-ink);
 }
 
 .timeInput {
   min-height: 2.25rem;
   padding: 0 var(--space-2);
-  background: var(--color-surface-sunken);
-  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid color-mix(in srgb, var(--meal) 30%, transparent);
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
@@ -176,9 +237,24 @@
 
 .timeInput:focus {
   outline: none;
-  border-color: var(--color-accent);
+  border-color: var(--meal);
 }
 
 .restore {
   margin-left: auto;
+}
+
+@media (max-width: 420px) {
+  .eatenLabel {
+    display: none;
+  }
+  .eaten {
+    padding: 0 var(--space-2);
+  }
+}
+
+@media (min-width: 640px) {
+  .meal {
+    padding: var(--space-5) var(--space-6);
+  }
 }

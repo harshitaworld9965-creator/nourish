@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Settings, Download, X } from 'lucide-react';
+import { Settings, Download, X, Check } from 'lucide-react';
 import { useToday } from '../../hooks/useToday.js';
 import { useDay } from '../../hooks/useDay.js';
 import { useWeight } from '../../hooks/useWeight.js';
@@ -12,10 +12,11 @@ import { WaterTracker } from '../../components/WaterTracker/WaterTracker.jsx';
 import { MealSection } from '../../components/MealSection/MealSection.jsx';
 import { SnackSection } from '../../components/SnackSection/SnackSection.jsx';
 import { DayActions } from '../../components/DayActions/DayActions.jsx';
+import { themeFor, themeVars } from '../../components/MealSection/mealTheme.js';
 import { Button } from '../../components/ui/Button.jsx';
 import { addDays, formatLong, greeting } from '../../utils/dates.js';
 import { summarizeDays, nutritionStats } from '../../utils/analytics.js';
-import { fmtKcal, fmtProtein, formatNumber } from '../../utils/nutrition.js';
+import { fmtKcal, fmtProtein, formatNumber, SNACKS_ID } from '../../utils/nutrition.js';
 import styles from './Dashboard.module.css';
 
 export default function Dashboard() {
@@ -39,6 +40,7 @@ export default function Dashboard() {
           {greeting()}
           {name ? `, ${name}` : ''}.
         </h1>
+        <DayStrip meals={day.meals} snackCount={snacks.length} />
       </section>
 
       <InstallBanner />
@@ -81,6 +83,45 @@ export default function Dashboard() {
         </aside>
       </div>
     </div>
+  );
+}
+
+/** One coloured chip per meal. Fills in when eaten; tap to jump to that meal. */
+function DayStrip({ meals, snackCount }) {
+  return (
+    <nav className={styles.strip} aria-label="Jump to a meal">
+      {meals.map((m) => {
+        const { icon: Icon } = themeFor(m.id);
+        return (
+          <a
+            key={m.id}
+            href={`#meal-${m.id}`}
+            className={`${styles.chip} ${m.eaten ? styles.chipDone : ''}`}
+            style={themeVars(m.id)}
+          >
+            <Icon size={16} strokeWidth={2.2} aria-hidden="true" />
+            <span>{m.name}</span>
+            {m.eaten && <Check size={14} strokeWidth={3} aria-label="eaten" />}
+          </a>
+        );
+      })}
+      <SnackChip count={snackCount} />
+    </nav>
+  );
+}
+
+function SnackChip({ count }) {
+  const { icon: Icon } = themeFor(SNACKS_ID);
+  return (
+    <a
+      href="#meal-snacks"
+      className={`${styles.chip} ${count ? styles.chipDone : ''}`}
+      style={themeVars(SNACKS_ID)}
+    >
+      <Icon size={16} strokeWidth={2.2} aria-hidden="true" />
+      <span>Snacks</span>
+      {count > 0 && <span className={styles.count}>{count}</span>}
+    </a>
   );
 }
 

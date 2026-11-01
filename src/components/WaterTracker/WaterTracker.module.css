@@ -1,18 +1,41 @@
 .water {
   display: grid;
   gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--c-water-soft);
+  border-radius: var(--radius-xl);
 }
 
 .head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--c-water-ink);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--c-water);
+  color: #fff;
+}
+
+.status {
   font-size: var(--text-sm);
   font-weight: 500;
+  color: var(--c-water-ink);
 }
 
 .figure {
@@ -29,7 +52,8 @@
 }
 
 .target {
-  color: var(--color-text-muted);
+  color: var(--c-water-ink);
+  opacity: 0.75;
   font-variant-numeric: tabular-nums;
 }
 
@@ -41,31 +65,72 @@
   gap: var(--space-3);
 }
 
-/* Small tumbler shapes: slightly narrower at the base */
+/* Little tumblers: narrower at the base */
 .glasses {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  max-width: 22rem;
+  max-width: 24rem;
 }
 
 .glasses li {
-  width: 0.75rem;
-  height: 1rem;
-  border: 1px solid var(--color-text-muted);
-  border-radius: 1px 1px 4px 4px;
+  width: 0.8rem;
+  height: 1.1rem;
+  border: 1.5px solid color-mix(in srgb, var(--c-water) 45%, transparent);
+  border-radius: 1px 1px 5px 5px;
+  background: rgba(255, 255, 255, 0.5);
   transition:
     background-color var(--duration-base) var(--ease-out),
-    border-color var(--duration-base) var(--ease-out);
+    border-color var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
 }
 
 .glasses .full {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--c-water);
+  border-color: var(--c-water);
 }
 
 .buttons {
   display: flex;
   align-items: center;
+  gap: var(--space-2);
+}
+
+.minus,
+.add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: var(--space-1);
+  min-height: 2.5rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.minus {
+  width: 2.5rem;
+  color: var(--c-water-ink);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.minus:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.add {
+  padding: 0 var(--space-4) 0 var(--space-3);
+  background: var(--c-water);
+  color: #fff;
+}
+
+.add:hover {
+  background: var(--c-water-ink);
+}
+
+@media (min-width: 640px) {
+  .water {
+    padding: var(--space-6);
+  }
 }
