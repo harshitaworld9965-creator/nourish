@@ -1,0 +1,56 @@
+.page {
+  display: grid;
+  gap: var(--space-8);
+  max-width: 52rem;
+}
+
+.dateBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+  border-block: var(--border);
+}
+
+.dateLabel {
+  position: relative;
+  flex: 1;
+  min-width: 10rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.dateText {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+}
+
+/* The native picker sits invisibly over the label so tapping the date opens it */
+.dateInput {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  cursor: pointer;
+}
+
+.dateInput::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.dateLabel:focus-within .dateText {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--color-accent);
+}
+
+.day {
+  display: grid;
+  gap: var(--space-10);
+}
+

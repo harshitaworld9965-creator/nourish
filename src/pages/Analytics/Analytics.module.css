@@ -1,0 +1,93 @@
+.page {
+  display: grid;
+  gap: var(--space-10);
+}
+
+.weekBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.weekLabel {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  min-width: 9rem;
+  text-align: center;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--color-text);
+}
+
+.stat {
+  display: grid;
+  gap: var(--space-1);
+  align-content: start;
+  padding: var(--space-4) var(--space-3) var(--space-5) 0;
+  border-bottom: var(--border);
+}
+
+.stat:nth-child(even) {
+  padding-left: var(--space-4);
+  border-left: var(--border);
+}
+
+.statLine {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.statValue {
+  font-size: var(--text-3xl);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.charts {
+  display: grid;
+  gap: var(--space-10);
+}
+
+.section {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+  min-width: 0;
+}
+
+.foods {
+  border-top: 1px solid var(--color-text);
+}
+
+.food {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-block: var(--space-3);
+}
+
+@media (min-width: 720px) {
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .stat:nth-child(even) {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .stat:not(:nth-child(3n + 1)) {
+    padding-left: var(--space-4);
+    border-left: var(--border);
+  }
+}
+
+@media (min-width: 1000px) {
+  .charts {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
+  }
+}

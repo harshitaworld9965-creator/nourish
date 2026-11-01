@@ -1,0 +1,78 @@
+/* Type roles. Components use these classes rather than setting
+   font-family/size directly, so the voice stays consistent. */
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+  font-feature-settings: 'ss01', 'cv05'; /* Instrument Sans: single-storey a off, open digits */
+}
+
+/* Serif display — big numbers, page titles, meal names */
+.t-display,
+.t-title,
+.t-heading {
+  font-family: var(--font-serif);
+  font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0;
+  font-weight: 400;
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+
+.t-display {
+  font-size: var(--text-4xl);
+}
+
+.t-title {
+  font-size: var(--text-3xl);
+}
+
+.t-heading {
+  font-size: var(--text-2xl);
+  font-variation-settings: 'opsz' 72, 'SOFT' 50, 'WONK' 0;
+}
+
+/* Serif at text size — used for the numbers inside the UI (kcal, grams),
+   where the serif gives them presence without shouting. */
+.t-numeral {
+  font-family: var(--font-serif);
+  font-variation-settings: 'opsz' 48, 'SOFT' 30, 'WONK' 0;
+  font-weight: 500;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Sans roles */
+.t-lead {
+  font-size: var(--text-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-muted);
+  max-width: var(--reading-max);
+}
+
+.t-body {
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+}
+
+.t-small {
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+
+.t-caption {
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  color: var(--color-text-muted);
+  letter-spacing: var(--tracking-wide);
+}
+
+.t-muted {
+  color: var(--color-text-muted);
+}
+
+.t-tabular {
+  font-variant-numeric: tabular-nums;
+}

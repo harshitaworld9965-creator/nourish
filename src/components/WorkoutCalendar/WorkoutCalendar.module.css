@@ -1,0 +1,83 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-top: 1px solid var(--color-text);
+}
+
+.day {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-1) var(--space-4);
+  border-bottom: var(--border);
+  min-height: 9rem;
+}
+
+.day + .day {
+  border-left: var(--border);
+}
+
+.today {
+  background: var(--color-accent-soft);
+}
+
+.dayHead {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.num {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-variant-numeric: lining-nums;
+}
+
+.slots {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+}
+
+.slot {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px dashed var(--color-text-muted);
+  color: var(--color-text-muted);
+}
+
+.slot:not(:disabled):hover {
+  border-style: solid;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+.slot:disabled {
+  cursor: default;
+}
+
+.done {
+  border: 1px solid var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.extra {
+  background: var(--color-accent-2);
+  border-color: var(--color-accent-2);
+  color: var(--color-text);
+}
+
+.rest {
+  padding-top: var(--space-2);
+}
+
+@media (min-width: 640px) {
+  .day {
+    padding-inline: var(--space-2);
+  }
+}

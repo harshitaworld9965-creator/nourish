@@ -1,0 +1,112 @@
+.nav {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 20;
+  padding-bottom: var(--safe-bottom);
+  background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: var(--border);
+}
+
+.wordmark {
+  display: none;
+}
+
+.list {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  height: var(--nav-height);
+}
+
+.railOnly {
+  display: none;
+}
+
+.link {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-wide);
+}
+
+.link:hover {
+  color: var(--color-text);
+}
+
+.active {
+  color: var(--color-text);
+}
+
+/* A short accent rule marks the current tab instead of a filled pill */
+.active svg {
+  color: var(--color-accent-strong);
+}
+
+@media (min-width: 900px) {
+  .nav {
+    position: sticky;
+    top: 0;
+    inset: auto;
+    height: 100dvh;
+    padding: var(--space-8) var(--space-4);
+    border-top: 0;
+    border-right: var(--border);
+    background: var(--color-bg);
+    backdrop-filter: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+
+  .wordmark {
+    display: block;
+    padding-inline: var(--space-3);
+    font-family: var(--font-serif);
+    font-variation-settings: 'opsz' 72, 'SOFT' 80, 'WONK' 1;
+    font-size: var(--text-2xl);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    height: auto;
+  }
+
+  .railOnly {
+    display: block;
+  }
+
+  .list > li:nth-child(6) {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: var(--border);
+  }
+
+  .link {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--space-3);
+    min-height: 2.75rem;
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    letter-spacing: 0;
+  }
+
+  .link:hover {
+    background: var(--color-surface-sunken);
+  }
+
+  .active {
+    background: var(--color-accent-soft);
+  }
+}

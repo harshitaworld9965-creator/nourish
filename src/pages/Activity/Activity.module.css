@@ -1,0 +1,156 @@
+.page {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.weekBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.weekLabel {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  min-width: 9rem;
+  text-align: center;
+}
+
+.routineBtn {
+  margin-left: auto;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-10);
+}
+
+.summary dd {
+  font-size: var(--text-lg);
+}
+
+.summary dd > span {
+  font-size: var(--text-2xl);
+}
+
+.section {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.list {
+  border-top: 1px solid var(--color-text);
+  max-width: 44rem;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-block: var(--space-3);
+}
+
+.entryMain {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.form {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.segment {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  border: 0;
+  padding: 0;
+}
+
+.segment legend {
+  width: 100%;
+  margin-bottom: var(--space-2);
+}
+
+.segOption {
+  position: relative;
+}
+
+.segOption input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  cursor: pointer;
+}
+
+.segOption span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0 var(--space-5);
+  border: var(--border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.segOption input:checked + span {
+  background: var(--color-text);
+  border-color: var(--color-text);
+  color: var(--color-bg);
+}
+
+.segOption input:focus-visible + span {
+  box-shadow: var(--focus-ring);
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.routine {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.routine th,
+.routine td {
+  padding: var(--space-2) 0;
+  border-bottom: var(--border);
+  text-align: left;
+  font-weight: 400;
+}
+
+.routine thead th {
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-text);
+}
+
+.routine input[type='checkbox'] {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--color-accent);
+}
+
+.routineSelect {
+  min-height: 2.25rem;
+  padding: 0 var(--space-2);
+  background: var(--color-surface-sunken);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}

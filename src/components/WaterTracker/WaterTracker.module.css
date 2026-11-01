@@ -1,0 +1,71 @@
+.water {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.figure {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.value {
+  font-size: var(--text-3xl);
+  line-height: 1;
+  font-weight: 400;
+}
+
+.target {
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Small tumbler shapes: slightly narrower at the base */
+.glasses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-width: 22rem;
+}
+
+.glasses li {
+  width: 0.75rem;
+  height: 1rem;
+  border: 1px solid var(--color-text-muted);
+  border-radius: 1px 1px 4px 4px;
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+}
+
+.glasses .full {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
