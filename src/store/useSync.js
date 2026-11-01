@@ -98,16 +98,9 @@ export function useSync(state, dispatch) {
     return () => clearTimeout(t);
   }, [state, userId, runSync]);
 
-  const sendCode = useCallback(async (email) => {
-    const { error: e } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin, shouldCreateUser: true },
-    });
-    if (e) throw e;
-  }, []);
-
-  const verifyCode = useCallback(async (email, token) => {
-    const { error: e } = await supabase.auth.verifyOtp({ email, token, type: 'email' });
+  // Plain email + password. The account is created once in the Supabase dashboard.
+  const signIn = useCallback(async (email, password) => {
+    const { error: e } = await supabase.auth.signInWithPassword({ email, password });
     if (e) throw e;
   }, []);
 
@@ -124,8 +117,7 @@ export function useSync(state, dispatch) {
     error,
     lastSynced,
     syncNow: runSync,
-    sendCode,
-    verifyCode,
+    signIn,
     signOut,
   };
 }
