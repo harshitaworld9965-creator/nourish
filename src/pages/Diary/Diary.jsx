@@ -4,6 +4,7 @@ import { PageHeader } from '../../components/PageHeader/PageHeader.jsx';
 import { NutritionSummary } from '../../components/NutritionSummary/NutritionSummary.jsx';
 import { WaterTracker } from '../../components/WaterTracker/WaterTracker.jsx';
 import { MealSection } from '../../components/MealSection/MealSection.jsx';
+import { SnackSection } from '../../components/SnackSection/SnackSection.jsx';
 import { DayActions } from '../../components/DayActions/DayActions.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { useToday } from '../../hooks/useToday.js';
@@ -47,7 +48,7 @@ export default function Diary() {
 }
 
 function DiaryDay({ date }) {
-  const { day, eaten, planned, actions, targets, water } = useDay(date);
+  const { day, eaten, planned, actions, targets, water, snacks } = useDay(date);
   return (
     <div className={styles.day}>
       <NutritionSummary eaten={eaten} planned={planned} kcalTarget={targets.kcalTarget} proteinTarget={targets.proteinTarget} />
@@ -56,6 +57,7 @@ function DiaryDay({ date }) {
         {day.meals.map((meal) => (
           <MealSection key={meal.id} meal={meal} actions={actions} />
         ))}
+        <SnackSection snacks={snacks} actions={actions} />
         <DayActions day={day} actions={actions} />
       </section>
     </div>

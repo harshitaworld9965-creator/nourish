@@ -2,6 +2,9 @@
  * Pure nutrition maths. No React, no storage — easy to reason about and test.
  */
 
+/** Snacks live in day.snacks, not in day.meals. This id lets item actions target them. */
+export const SNACKS_ID = 'snacks';
+
 export function getUnits(food) {
   if (!food) return [];
   const units = [{ id: 'base', label: food.perUnit, size: 1 }];
@@ -23,8 +26,9 @@ export function itemNutrition(item, food) {
   return { kcal: factor * food.kcal, protein: factor * food.protein };
 }
 
-export function mealTotals(meal, foodsById) {
-  return meal.items.reduce(
+/** Totals for any list of items (a meal's items or the day's snacks). */
+export function itemsTotals(items, foodsById) {
+  return (items ?? []).reduce(
     (acc, item) => {
       const n = itemNutrition(item, foodsById[item.foodId]);
       acc.kcal += n.kcal;
@@ -35,6 +39,12 @@ export function mealTotals(meal, foodsById) {
   );
 }
 
+export const mealTotals = (meal, foodsById) => itemsTotals(meal.items, foodsById);
+
+/**
+ * Day totals. With eatenOnly, planned meals count only once marked eaten.
+ * Snacks always count — you only add a snack after eating it.
+ */
 export function dayTotals(day, foodsById, { eatenOnly = false } = {}) {
   const totals = { kcal: 0, protein: 0 };
   if (!day) return totals;
@@ -44,10 +54,13 @@ export function dayTotals(day, foodsById, { eatenOnly = false } = {}) {
     totals.kcal += t.kcal;
     totals.protein += t.protein;
   }
+  const s = itemsTotals(day.snacks, foodsById);
+  totals.kcal += s.kcal;
+  totals.protein += s.protein;
   return totals;
 }
 
-export const dayHasEaten = (day) => Boolean(day?.meals?.some((m) => m.eaten));
+export const dayHasEaten = (day) => Boolean(day?.meals?.some((m) => m.eaten) || day?.snacks?.length);
 
 /** A sensible starting portion when a food is first added. */
 export function defaultPortion(food) {

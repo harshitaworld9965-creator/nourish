@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { Check, ChevronDown, Plus, RotateCcw } from 'lucide-react';
+import { Check, ChevronDown, Plus, RotateCcw, Shuffle } from 'lucide-react';
 import { Button } from '../ui/Button.jsx';
 import { ItemEditor } from '../ItemEditor/ItemEditor.jsx';
 import { useToast } from '../ui/Toast.jsx';
@@ -31,6 +31,15 @@ export function MealSection({ meal, actions }) {
     toast(`${meal.name} restored to the original plan`, { label: 'Undo', onClick: () => actions.setMeal(before) });
   };
 
+  // Clear the planned foods for this day only, then open the food search
+  const replace = () => {
+    const before = structuredClone(meal);
+    actions.replaceMeal(meal.id);
+    setExpanded(true);
+    setEditing('new');
+    toast(`${meal.name} cleared — add what you ate`, { label: 'Undo', onClick: () => actions.setMeal(before) });
+  };
+
   return (
     <article className={`${styles.meal} ${meal.eaten ? styles.isEaten : ''}`}>
       <header className={styles.header}>
@@ -41,7 +50,10 @@ export function MealSection({ meal, actions }) {
           aria-controls={listId}
           onClick={() => setExpanded((v) => !v)}
         >
-          <span className={styles.time}>{formatTime(meal.time)}</span>
+          <span className={styles.time}>
+            {formatTime(meal.time)}
+            {meal.replaced && <span className={styles.changed}> · Changed from plan</span>}
+          </span>
           <span className={styles.titleRow}>
             <h3 className={styles.name}>{meal.name}</h3>
             <ChevronDown size={18} className={styles.chevron} aria-hidden="true" />
@@ -70,7 +82,9 @@ export function MealSection({ meal, actions }) {
 
       <div id={listId} hidden={!expanded}>
         {meal.items.length === 0 ? (
-          <p className={`t-small t-muted ${styles.emptyMeal}`}>No foods in this meal.</p>
+          <p className={`t-small t-muted ${styles.emptyMeal}`}>
+            {meal.replaced ? 'Add what you ate instead.' : 'No foods in this meal.'}
+          </p>
         ) : (
           <ul className={`ruled ${styles.items}`}>
             {meal.items.map((item) => {
@@ -101,6 +115,11 @@ export function MealSection({ meal, actions }) {
           <Button variant="secondary" size="sm" icon={<Plus />} onClick={() => setEditing('new')}>
             Add food
           </Button>
+          {!meal.replaced && (
+            <Button variant="ghost" size="sm" icon={<Shuffle />} onClick={replace}>
+              Ate something else
+            </Button>
+          )}
           <label className={styles.timeField}>
             <span className="t-small t-muted">Time</span>
             <input

@@ -1,6 +1,6 @@
 import { dayTotals, dayHasEaten } from './nutrition.js';
 
-/** A day counts as "logged" once at least one meal is marked eaten. */
+/** A day counts as "logged" once a meal is marked eaten or a snack is added. */
 export function summarizeDays(days, keys, foodsById) {
   return keys.map((date) => {
     const day = days[date];
@@ -29,14 +29,16 @@ export function nutritionStats(summaries, settings) {
   };
 }
 
-/** Foods that appear most often in eaten meals over the given dates. */
+/** Foods that appear most often in eaten meals and snacks over the given dates. */
 export function topFoods(days, keys, foodsById, limit = 5) {
   const counts = new Map();
+  const count = (item) => counts.set(item.foodId, (counts.get(item.foodId) ?? 0) + 1);
   for (const date of keys) {
-    for (const meal of days[date]?.meals ?? []) {
-      if (!meal.eaten) continue;
-      for (const item of meal.items) counts.set(item.foodId, (counts.get(item.foodId) ?? 0) + 1);
+    const day = days[date];
+    for (const meal of day?.meals ?? []) {
+      if (meal.eaten) meal.items.forEach(count);
     }
+    (day?.snacks ?? []).forEach(count);
   }
   return [...counts.entries()]
     .sort((a, b) => b[1] - a[1])

@@ -1,5 +1,6 @@
 import { createInitialState, materializeDay, defaultMeal } from './initialState.js';
 import { DEFAULT_TEMPLATE } from '../data/defaultMealPlan.js';
+import { SNACKS_ID } from '../utils/nutrition.js';
 
 const stamp = (prev = 0) => Math.max(Date.now(), prev + 1);
 
@@ -11,11 +12,33 @@ function editDay(state, date, fn) {
   return { ...state, days: { ...state.days, [date]: { ...next, updatedAt: stamp(day.updatedAt) } } };
 }
 
+/** Change one meal. If fn returns the same meal, nothing is saved. */
 function editMeal(state, date, mealId, fn) {
-  return editDay(state, date, (day) => ({
-    ...day,
-    meals: day.meals.map((m) => (m.id === mealId ? fn(m) : m)),
-  }));
+  return editDay(state, date, (day) => {
+    let changed = false;
+    const meals = day.meals.map((m) => {
+      if (m.id !== mealId) return m;
+      const next = fn(m);
+      if (next !== m) changed = true;
+      return next;
+    });
+    return changed ? { ...day, meals } : day;
+  });
+}
+
+/** Change the item list of a meal — or of the day's snacks when mealId is 'snacks'. */
+function editItems(state, date, mealId, fn) {
+  if (mealId === SNACKS_ID) {
+    return editDay(state, date, (day) => {
+      const items = day.snacks ?? [];
+      const next = fn(items);
+      return next === items ? day : { ...day, snacks: next };
+    });
+  }
+  return editMeal(state, date, mealId, (meal) => {
+    const next = fn(meal.items);
+    return next === meal.items ? meal : { ...meal, items: next };
+  });
 }
 
 const editSlice = (state, key, fn) => {
@@ -34,26 +57,22 @@ export function reducer(state, action) {
       return { ...state, days: { ...state.days, [action.date]: materializeDay(state) } };
 
     case 'INSERT_ITEM':
-      return editMeal(state, action.date, action.mealId, (meal) => {
+      return editItems(state, action.date, action.mealId, (items) => {
         // Guard against double taps: an item id can only be added once.
-        if (meal.items.some((i) => i.id === action.item.id)) return meal;
-        const items = [...meal.items];
-        const at = action.index ?? items.length;
-        items.splice(Math.min(at, items.length), 0, action.item);
-        return { ...meal, items };
+        if (items.some((i) => i.id === action.item.id)) return items;
+        const next = [...items];
+        const at = action.index ?? next.length;
+        next.splice(Math.min(at, next.length), 0, action.item);
+        return next;
       });
 
     case 'UPDATE_ITEM':
-      return editMeal(state, action.date, action.mealId, (meal) => ({
-        ...meal,
-        items: meal.items.map((i) => (i.id === action.itemId ? { ...i, ...action.patch } : i)),
-      }));
+      return editItems(state, action.date, action.mealId, (items) =>
+        items.map((i) => (i.id === action.itemId ? { ...i, ...action.patch } : i)),
+      );
 
     case 'REMOVE_ITEM':
-      return editMeal(state, action.date, action.mealId, (meal) => ({
-        ...meal,
-        items: meal.items.filter((i) => i.id !== action.itemId),
-      }));
+      return editItems(state, action.date, action.mealId, (items) => items.filter((i) => i.id !== action.itemId));
 
     case 'SET_MEAL_TIME':
       return editMeal(state, action.date, action.mealId, (meal) => ({ ...meal, time: action.time }));
@@ -65,6 +84,15 @@ export function reducer(state, action) {
       return editDay(state, action.date, (day) => ({
         ...day,
         meals: day.meals.map((m) => ({ ...m, eaten: action.eaten })),
+      }));
+
+    case 'REPLACE_MEAL':
+      // "Ate something else": empty the planned foods, mark eaten, flag as changed.
+      return editMeal(state, action.date, action.mealId, (meal) => ({
+        ...meal,
+        items: [],
+        eaten: true,
+        replaced: true,
       }));
 
     case 'ADD_WATER':
@@ -79,6 +107,7 @@ export function reducer(state, action) {
       return editMeal(state, action.date, action.meal.id, () => structuredClone(action.meal));
 
     case 'RESTORE_MEAL':
+      // The original meal has no `replaced` flag, so restoring also clears "Changed from plan"
       return editMeal(state, action.date, action.mealId, (meal) => {
         const original = defaultMeal(action.mealId);
         return original ? { ...original, eaten: meal.eaten } : meal;
@@ -88,7 +117,7 @@ export function reducer(state, action) {
       return editDay(state, action.date, () => structuredClone(action.day));
 
     case 'RESTORE_DAY':
-      // Restores meals only; water already drunk that day is kept
+      // Restores meals only; water and snacks for that day are kept
       return editDay(state, action.date, (day) => ({
         ...day,
         templateId: 'default',

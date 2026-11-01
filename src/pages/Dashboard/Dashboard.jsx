@@ -10,6 +10,7 @@ import { useStore } from '../../store/NourishProvider.jsx';
 import { NutritionSummary } from '../../components/NutritionSummary/NutritionSummary.jsx';
 import { WaterTracker } from '../../components/WaterTracker/WaterTracker.jsx';
 import { MealSection } from '../../components/MealSection/MealSection.jsx';
+import { SnackSection } from '../../components/SnackSection/SnackSection.jsx';
 import { DayActions } from '../../components/DayActions/DayActions.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { addDays, formatLong, greeting } from '../../utils/dates.js';
@@ -20,7 +21,7 @@ import styles from './Dashboard.module.css';
 export default function Dashboard() {
   const today = useToday();
   const { state } = useStore();
-  const { day, eaten, planned, foodsById, actions, targets, water } = useDay(today);
+  const { day, eaten, planned, foodsById, actions, targets, water, snacks } = useDay(today);
   const name = state.settings.name.trim();
 
   return (
@@ -63,6 +64,7 @@ export default function Dashboard() {
             {day.meals.map((meal) => (
               <MealSection key={meal.id} meal={meal} actions={actions} />
             ))}
+            <SnackSection snacks={snacks} actions={actions} />
             <DayActions day={day} actions={actions} />
           </section>
         </div>

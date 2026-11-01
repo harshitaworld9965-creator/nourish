@@ -24,6 +24,10 @@
   font-variant-numeric: tabular-nums;
 }
 
+.changed {
+  color: var(--color-text-muted);
+}
+
 .titleRow {
   display: flex;
   align-items: center;
@@ -49,6 +53,11 @@
 
 .totals {
   font-variant-numeric: tabular-nums;
+}
+
+.note {
+  margin-top: var(--space-2);
+  max-width: var(--reading-max);
 }
 
 .eaten {

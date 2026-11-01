@@ -6,8 +6,8 @@ import { dayTotals } from '../utils/nutrition.js';
 import { DEFAULT_WATER_TARGET, DEFAULT_GLASS_SIZE } from '../data/defaultSettings.js';
 
 /**
- * One day's meals and water. If the date has never been opened, it is created
- * from the active template (once — later template changes don't rewrite it).
+ * One day's meals, snacks and water. If the date has never been opened, it is
+ * created from the active template (once — later template changes don't rewrite it).
  */
 export function useDay(date) {
   const { state, dispatch } = useStore();
@@ -36,6 +36,7 @@ export function useDay(date) {
 
   const actions = useMemo(
     () => ({
+      // mealId can be a meal id or 'snacks'
       insertItem: (mealId, item, index) => dispatch({ type: 'INSERT_ITEM', date, mealId, item, index }),
       updateItem: (mealId, itemId, patch) => dispatch({ type: 'UPDATE_ITEM', date, mealId, itemId, patch }),
       removeItem: (mealId, itemId) => dispatch({ type: 'REMOVE_ITEM', date, mealId, itemId }),
@@ -43,6 +44,7 @@ export function useDay(date) {
       toggleEaten: (mealId) => dispatch({ type: 'TOGGLE_EATEN', date, mealId }),
       setAllEaten: (value) => dispatch({ type: 'SET_ALL_EATEN', date, eaten: value }),
       setMeal: (meal) => dispatch({ type: 'SET_MEAL', date, meal }),
+      replaceMeal: (mealId) => dispatch({ type: 'REPLACE_MEAL', date, mealId }),
       restoreMeal: (mealId) => dispatch({ type: 'RESTORE_MEAL', date, mealId }),
       setDay: (d) => dispatch({ type: 'SET_DAY', date, day: d }),
       restoreDay: () => dispatch({ type: 'RESTORE_DAY', date }),
@@ -51,5 +53,14 @@ export function useDay(date) {
     [date, dispatch],
   );
 
-  return { day, eaten, planned, foodsById, actions, targets, water: day.water ?? 0 };
+  return {
+    day,
+    eaten,
+    planned,
+    foodsById,
+    actions,
+    targets,
+    water: day.water ?? 0,
+    snacks: day.snacks ?? [],
+  };
 }
