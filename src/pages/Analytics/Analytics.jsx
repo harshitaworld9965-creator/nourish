@@ -5,17 +5,23 @@ import { Button } from '../../components/ui/Button.jsx';
 import { EmptyState } from '../../components/ui/EmptyState.jsx';
 import { DailyBars } from '../../components/charts/DailyBars.jsx';
 import { WeeklyWeightLine } from '../../components/charts/WeeklyWeightLine.jsx';
+import { chart } from '../../components/charts/chartTheme.js';
 import { useStore } from '../../store/NourishProvider.jsx';
 import { useFoods } from '../../hooks/useFoods.js';
 import { useToday } from '../../hooks/useToday.js';
 import { useWeight, weeklyAverages, averageBetween } from '../../hooks/useWeight.js';
 import { useWorkouts } from '../../hooks/useWorkouts.js';
-import { summarizeDays, nutritionStats, topFoods, kcalOnTarget, proteinOnTarget } from '../../utils/analytics.js';
-import { addDays, startOfWeek, weekKeys, formatWeekRange } from '../../utils/dates.js';
+import {
+  summarizeDays, nutritionStats, topFoods, kcalOnTarget, proteinOnTarget,
+  stepSummaries, stepStats, weeklyStepAverages,
+} from '../../utils/analytics.js';
+import { addDays, startOfWeek, weekKeys, formatWeekRange, formatShort, weekdayShort } from '../../utils/dates.js';
 import { fmtKcal, fmtProtein, formatNumber } from '../../utils/nutrition.js';
+import { DEFAULT_STEP_GOAL } from '../../data/defaultSettings.js';
 import styles from './Analytics.module.css';
 
 const signed = (n) => (n > 0 ? `+${formatNumber(n)}` : n < 0 ? `−${formatNumber(-n)}` : '0');
+const fmtSteps = (n) => Math.round(n).toLocaleString('en-IN');
 
 export default function Analytics() {
   const today = useToday();
@@ -26,6 +32,7 @@ export default function Analytics() {
   const [weekStart, setWeekStart] = useState(() => startOfWeek(today));
   const keys = useMemo(() => weekKeys(weekStart), [weekStart]);
   const settings = state.settings;
+  const stepGoal = settings.stepGoal ?? DEFAULT_STEP_GOAL;
 
   const days = useMemo(() => {
     return summarizeDays(state.days, keys, foodsById).map((d) => ({
@@ -37,8 +44,15 @@ export default function Analytics() {
 
   const stats = nutritionStats(days, settings);
   const foods = useMemo(() => topFoods(state.days, keys, foodsById), [state.days, keys, foodsById]);
+
+  const stepDays = useMemo(() => stepSummaries(state.days, keys, stepGoal), [state.days, keys, stepGoal]);
+  const steps = stepStats(stepDays);
+  const stepTrend = useMemo(() => weeklyStepAverages(state.days, 8, keys[6], stepGoal), [state.days, keys, stepGoal]);
+  const hasStepTrend = stepTrend.filter((w) => w.logged).length > 1;
+
   const weekWorkouts = workouts.filter((w) => w.date >= keys[0] && w.date <= keys[6]);
   const avgDuration = weekWorkouts.length ? weekWorkouts.reduce((a, w) => a + w.duration, 0) / weekWorkouts.length : null;
+  const activeDays = new Set(weekWorkouts.map((w) => w.date)).size;
   const thisAvg = averageBetween(weights, keys[0], keys[6]);
   const prevAvg = averageBetween(weights, addDays(keys[0], -7), addDays(keys[0], -1));
   const weightTrend = useMemo(() => weeklyAverages(weights, 8, keys[6]), [weights, keys]);
@@ -59,8 +73,20 @@ export default function Analytics() {
         <Stat label="Average calories" value={stats.avgKcal != null ? fmtKcal(stats.avgKcal) : '—'} unit="kcal / day" note={`Target ${fmtKcal(settings.kcalTarget)}`} />
         <Stat label="Average protein" value={stats.avgProtein != null ? fmtProtein(stats.avgProtein) : '—'} unit="g / day" note={`Target ${settings.proteinTarget} g`} />
         <Stat label="Days on target" value={stats.loggedDays ? stats.bothDays : '—'} unit={stats.loggedDays ? `of ${stats.loggedDays}` : ''} note={`Calories ${stats.kcalDays}, protein ${stats.proteinDays}`} />
+        <Stat
+          label="Average steps"
+          value={steps.avg != null ? fmtSteps(steps.avg) : '—'}
+          unit={steps.avg != null ? '/ day' : ''}
+          note={`Goal ${fmtSteps(stepGoal)}`}
+        />
+        <Stat
+          label="Step goal days"
+          value={steps.loggedDays ? steps.goalDays : '—'}
+          unit={steps.loggedDays ? `of ${steps.loggedDays}` : ''}
+          note={steps.best ? `Best: ${weekdayShort(steps.best.date)}, ${fmtSteps(steps.best.steps)}` : 'No steps logged'}
+        />
         <Stat label="Weight, weekly average" value={thisAvg != null ? formatNumber(thisAvg) : '—'} unit={thisAvg != null ? 'kg' : ''} note={thisAvg != null && prevAvg != null ? `${signed(thisAvg - prevAvg)} kg vs previous week` : 'No comparison yet'} />
-        <Stat label="Workouts" value={weekWorkouts.length} unit={weekWorkouts.length === 1 ? 'session' : 'sessions'} note={(() => { const n = new Set(weekWorkouts.map((w) => w.date)).size; return `${n} active ${n === 1 ? 'day' : 'days'}`; })()} />
+        <Stat label="Workouts" value={weekWorkouts.length} unit={weekWorkouts.length === 1 ? 'session' : 'sessions'} note={`${activeDays} active ${activeDays === 1 ? 'day' : 'days'}`} />
         <Stat label="Average workout" value={avgDuration != null ? Math.round(avgDuration) : '—'} unit={avgDuration != null ? 'min' : ''} note="Per session" />
       </dl>
 
@@ -72,16 +98,62 @@ export default function Analytics() {
         <div className={styles.charts}>
           <section className={styles.section}>
             <h2 className="t-heading">Calories</h2>
-            <DailyBars data={days.map((d) => ({ ...d, onTarget: d.kcalOk }))} dataKey="kcal" target={settings.kcalTarget} unit="kcal" format={fmtKcal} />
+            <DailyBars
+              data={days.map((d) => ({ ...d, onTarget: d.kcalOk }))}
+              dataKey="kcal"
+              target={settings.kcalTarget}
+              unit="kcal"
+              format={fmtKcal}
+              color={chart.kcal}
+            />
             <p className="t-caption">On target means 85–105% of your calorie goal.</p>
           </section>
           <section className={styles.section}>
             <h2 className="t-heading">Protein</h2>
-            <DailyBars data={days.map((d) => ({ ...d, onTarget: d.proteinOk }))} dataKey="protein" target={settings.proteinTarget} unit="g" format={fmtProtein} />
+            <DailyBars
+              data={days.map((d) => ({ ...d, onTarget: d.proteinOk }))}
+              dataKey="protein"
+              target={settings.proteinTarget}
+              unit="g"
+              format={fmtProtein}
+              color={chart.protein}
+            />
             <p className="t-caption">On target means at least 95% of your protein goal.</p>
           </section>
         </div>
       )}
+
+      <div className={styles.charts}>
+        <section className={styles.section}>
+          <h2 className="t-heading">Steps</h2>
+          {steps.loggedDays ? (
+            <DailyBars data={stepDays} dataKey="steps" target={stepGoal} unit="steps" format={fmtSteps} color={chart.steps} />
+          ) : (
+            <p className="t-small t-muted">Log your steps on the Today screen to see them here.</p>
+          )}
+        </section>
+
+        <section className={styles.section}>
+          <h2 className="t-heading">Steps, last 8 weeks</h2>
+          {hasStepTrend ? (
+            <>
+              <DailyBars
+                data={stepTrend}
+                dataKey="steps"
+                target={stepGoal}
+                unit="steps / day"
+                format={fmtSteps}
+                color={chart.steps}
+                xFormat={formatShort}
+                labelFormat={formatWeekRange}
+              />
+              <p className="t-caption">Average per day you logged steps, week by week.</p>
+            </>
+          ) : (
+            <p className="t-small t-muted">The weekly trend appears once you’ve logged steps in at least two weeks.</p>
+          )}
+        </section>
+      </div>
 
       <div className={styles.charts}>
         <section className={styles.section}>

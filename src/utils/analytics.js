@@ -1,4 +1,5 @@
 import { dayTotals, dayHasEaten } from './nutrition.js';
+import { addDays, startOfWeek, weekKeys } from './dates.js';
 
 /** A day counts as "logged" once a meal is marked eaten or a snack is added. */
 export function summarizeDays(days, keys, foodsById) {
@@ -44,4 +45,38 @@ export function topFoods(days, keys, foodsById, limit = 5) {
     .sort((a, b) => b[1] - a[1])
     .slice(0, limit)
     .map(([id, count]) => ({ id, name: foodsById[id]?.name ?? 'Deleted food', count }));
+}
+
+// ---------- Steps ----------
+
+/** Steps per date. A day with 0 steps counts as not logged, so it doesn't drag averages down. */
+export function stepSummaries(days, keys, goal) {
+  return keys.map((date) => {
+    const steps = days[date]?.steps ?? 0;
+    return { date, steps, logged: steps > 0, onTarget: steps >= goal };
+  });
+}
+
+export function stepStats(summaries) {
+  const logged = summaries.filter((d) => d.logged);
+  const n = logged.length;
+  const total = logged.reduce((a, d) => a + d.steps, 0);
+  const best = logged.reduce((b, d) => (!b || d.steps > b.steps ? d : b), null);
+  return {
+    loggedDays: n,
+    total,
+    avg: n ? total / n : null,
+    goalDays: logged.filter((d) => d.onTarget).length,
+    best,
+  };
+}
+
+/** Average steps per logged day for each of the last `weeks` weeks, oldest first. */
+export function weeklyStepAverages(days, weeks, endKey, goal) {
+  const lastWeek = startOfWeek(endKey);
+  return Array.from({ length: weeks }, (_, i) => {
+    const start = addDays(lastWeek, -7 * (weeks - 1 - i));
+    const s = stepStats(stepSummaries(days, weekKeys(start), goal));
+    return { date: start, steps: s.avg ?? 0, logged: s.loggedDays > 0, onTarget: s.avg != null && s.avg >= goal };
+  });
 }

@@ -3,11 +3,11 @@ import { useStore } from '../store/NourishProvider.jsx';
 import { materializeDay } from '../store/initialState.js';
 import { useFoods } from './useFoods.js';
 import { dayTotals } from '../utils/nutrition.js';
-import { DEFAULT_WATER_TARGET, DEFAULT_GLASS_SIZE } from '../data/defaultSettings.js';
+import { DEFAULT_WATER_TARGET, DEFAULT_GLASS_SIZE, DEFAULT_STEP_GOAL } from '../data/defaultSettings.js';
 
 /**
- * One day's meals, snacks and water. If the date has never been opened, it is
- * created from the active template (once — later template changes don't rewrite it).
+ * One day's meals, snacks, water and steps. If the date has never been opened,
+ * it is created from the active template (once — later template changes don't rewrite it).
  */
 export function useDay(date) {
   const { state, dispatch } = useStore();
@@ -24,12 +24,13 @@ export function useDay(date) {
   const eaten = useMemo(() => dayTotals(day, foodsById, { eatenOnly: true }), [day, foodsById]);
   const planned = useMemo(() => dayTotals(day, foodsById), [day, foodsById]);
 
-  // Older saved settings won't have the water fields yet
+  // Older saved settings won't have the newer fields yet
   const targets = useMemo(
     () => ({
       ...state.settings,
       waterTarget: state.settings.waterTarget ?? DEFAULT_WATER_TARGET,
       glassSize: state.settings.glassSize ?? DEFAULT_GLASS_SIZE,
+      stepGoal: state.settings.stepGoal ?? DEFAULT_STEP_GOAL,
     }),
     [state.settings],
   );
@@ -49,6 +50,7 @@ export function useDay(date) {
       setDay: (d) => dispatch({ type: 'SET_DAY', date, day: d }),
       restoreDay: () => dispatch({ type: 'RESTORE_DAY', date }),
       addWater: (ml) => dispatch({ type: 'ADD_WATER', date, ml }),
+      setSteps: (steps) => dispatch({ type: 'SET_STEPS', date, steps }),
     }),
     [date, dispatch],
   );
@@ -61,6 +63,7 @@ export function useDay(date) {
     actions,
     targets,
     water: day.water ?? 0,
+    steps: day.steps ?? 0,
     snacks: day.snacks ?? [],
   };
 }

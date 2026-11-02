@@ -11,6 +11,7 @@ export const DEFAULT_ROUTINE = [
 
 export const DEFAULT_WATER_TARGET = 4000; // ml per day
 export const DEFAULT_GLASS_SIZE = 250; // ml added per tap
+export const DEFAULT_STEP_GOAL = 5000; // steps per day
 
 export const DEFAULT_SETTINGS = {
   name: '',
@@ -18,6 +19,7 @@ export const DEFAULT_SETTINGS = {
   proteinTarget: 100,
   waterTarget: DEFAULT_WATER_TARGET,
   glassSize: DEFAULT_GLASS_SIZE,
+  stepGoal: DEFAULT_STEP_GOAL,
   activeTemplateId: 'default',
   mealTimes: {}, // { breakfast: '08:30' } overrides template times for new days
   routine: DEFAULT_ROUTINE,

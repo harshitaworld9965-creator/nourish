@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PageHeader } from '../../components/PageHeader/PageHeader.jsx';
 import { NutritionSummary } from '../../components/NutritionSummary/NutritionSummary.jsx';
 import { WaterTracker } from '../../components/WaterTracker/WaterTracker.jsx';
+import { StepsTracker } from '../../components/StepsTracker/StepsTracker.jsx';
 import { MealSection } from '../../components/MealSection/MealSection.jsx';
 import { SnackSection } from '../../components/SnackSection/SnackSection.jsx';
 import { DayActions } from '../../components/DayActions/DayActions.jsx';
@@ -48,11 +49,12 @@ export default function Diary() {
 }
 
 function DiaryDay({ date }) {
-  const { day, eaten, planned, actions, targets, water, snacks } = useDay(date);
+  const { day, eaten, planned, actions, targets, water, steps, snacks } = useDay(date);
   return (
     <div className={styles.day}>
       <NutritionSummary eaten={eaten} planned={planned} kcalTarget={targets.kcalTarget} proteinTarget={targets.proteinTarget} />
       <WaterTracker water={water} target={targets.waterTarget} glass={targets.glassSize} onAdd={actions.addWater} />
+      <StepsTracker steps={steps} goal={targets.stepGoal} onSet={actions.setSteps} />
       <section>
         {day.meals.map((meal) => (
           <MealSection key={meal.id} meal={meal} actions={actions} />

@@ -9,6 +9,7 @@ import { useInstallPrompt } from '../../hooks/useInstallPrompt.js';
 import { useStore } from '../../store/NourishProvider.jsx';
 import { NutritionSummary } from '../../components/NutritionSummary/NutritionSummary.jsx';
 import { WaterTracker } from '../../components/WaterTracker/WaterTracker.jsx';
+import { StepsTracker } from '../../components/StepsTracker/StepsTracker.jsx';
 import { MealSection } from '../../components/MealSection/MealSection.jsx';
 import { SnackSection } from '../../components/SnackSection/SnackSection.jsx';
 import { DayActions } from '../../components/DayActions/DayActions.jsx';
@@ -22,7 +23,7 @@ import styles from './Dashboard.module.css';
 export default function Dashboard() {
   const today = useToday();
   const { state } = useStore();
-  const { day, eaten, planned, foodsById, actions, targets, water, snacks } = useDay(today);
+  const { day, eaten, planned, foodsById, actions, targets, water, steps, snacks } = useDay(today);
   const name = state.settings.name.trim();
 
   return (
@@ -60,6 +61,8 @@ export default function Dashboard() {
             glass={targets.glassSize}
             onAdd={actions.addWater}
           />
+
+          <StepsTracker steps={steps} goal={targets.stepGoal} onSet={actions.setSteps} />
 
           <section className={styles.meals} aria-labelledby="meals-title">
             <h2 id="meals-title" className="sr-only">Today’s meals</h2>

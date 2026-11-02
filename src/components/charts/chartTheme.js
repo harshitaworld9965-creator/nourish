@@ -7,6 +7,11 @@ export const chart = {
   accentStrong: '#5c7563',
   accent2: '#d9bfa5',
   accent2Soft: '#f1e6da',
+  // Must match the --c-* colours in tokens.css
+  kcal: '#2e7a68',
+  protein: '#8e4e73',
+  water: '#3d84b8',
+  steps: '#e06a2c',
   font: "'Instrument Sans Variable', system-ui, sans-serif",
 };
 

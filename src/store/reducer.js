@@ -103,6 +103,12 @@ export function reducer(state, action) {
         return next === current ? day : { ...day, water: next };
       });
 
+    case 'SET_STEPS':
+      return editDay(state, action.date, (day) => {
+        const next = Math.min(100000, Math.max(0, Math.round(Number(action.steps) || 0)));
+        return next === (day.steps ?? 0) ? day : { ...day, steps: next };
+      });
+
     case 'SET_MEAL':
       return editMeal(state, action.date, action.meal.id, () => structuredClone(action.meal));
 
@@ -117,7 +123,7 @@ export function reducer(state, action) {
       return editDay(state, action.date, () => structuredClone(action.day));
 
     case 'RESTORE_DAY':
-      // Restores meals only; water and snacks for that day are kept
+      // Restores meals only; water, steps and snacks for that day are kept
       return editDay(state, action.date, (day) => ({
         ...day,
         templateId: 'default',

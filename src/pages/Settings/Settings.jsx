@@ -10,7 +10,7 @@ import { useStore } from '../../store/NourishProvider.jsx';
 import { useInstallPrompt } from '../../hooks/useInstallPrompt.js';
 import { useToday } from '../../hooks/useToday.js';
 import { DEFAULT_TEMPLATE } from '../../data/defaultMealPlan.js';
-import { DEFAULT_WATER_TARGET, DEFAULT_GLASS_SIZE } from '../../data/defaultSettings.js';
+import { DEFAULT_WATER_TARGET, DEFAULT_GLASS_SIZE, DEFAULT_STEP_GOAL } from '../../data/defaultSettings.js';
 import { getTemplate } from '../../store/initialState.js';
 import { exportFile, parseImport } from '../../utils/exportImport.js';
 import { clearStoredState } from '../../utils/storage.js';
@@ -72,6 +72,15 @@ export default function Settings() {
             min={50}
             max={2000}
             onSave={(v) => update({ glassSize: v })}
+          />
+        </div>
+        <div className={styles.two}>
+          <NumberSetting
+            label="Daily steps"
+            value={s.stepGoal ?? DEFAULT_STEP_GOAL}
+            min={500}
+            max={50000}
+            onSave={(v) => update({ stepGoal: v })}
           />
         </div>
       </Section>
