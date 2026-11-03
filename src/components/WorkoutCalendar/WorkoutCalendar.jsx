@@ -1,12 +1,17 @@
-import { Check, Dumbbell, Moon, Sun } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Check, Dumbbell, Footprints, Moon, Sun } from 'lucide-react';
 import { weekdayShort, fromKey } from '../../utils/dates.js';
 import styles from './WorkoutCalendar.module.css';
 
+const fmt = (n) => Math.round(n).toLocaleString('en-IN');
+
 /**
- * Seven columns: what the routine plans for each day, and whether it was done.
- * Tapping a planned session that isn't logged yet opens a pre-filled log form.
+ * Seven columns: what the routine plans for each day, whether it was done,
+ * and whether the step goal was hit. Tapping a planned session that isn't
+ * logged yet opens a pre-filled log form; tapping an unmet step circle opens
+ * that day in the diary.
  */
-export function WorkoutCalendar({ keys, today, planFor, onDate, onQuickLog, onOpenDay }) {
+export function WorkoutCalendar({ keys, today, planFor, onDate, onQuickLog, onOpenDay, stepsFor, stepGoal }) {
   return (
     <ol className={styles.grid} aria-label="Week">
       {keys.map((date) => {
@@ -42,6 +47,8 @@ export function WorkoutCalendar({ keys, today, planFor, onDate, onQuickLog, onOp
               {/* Unplanned sessions still show up */}
               {!plan.strength && strengthDone && <Slot label="Strength" icon={<Dumbbell size={15} />} done extra />}
               {!plan.cardio && cardioDone && <Slot label="Cardio" icon={<Sun size={15} />} done extra />}
+
+              <StepSlot date={date} steps={stepsFor(date)} goal={stepGoal} />
             </div>
           </li>
         );
@@ -62,5 +69,30 @@ function Slot({ label, icon, done, onClick, extra }) {
     >
       {done ? <Check size={15} strokeWidth={2.5} /> : icon}
     </button>
+  );
+}
+
+/** Goal hit → solid with a tick. Some steps → light fill. None → dashed. */
+function StepSlot({ date, steps, goal }) {
+  const hit = steps >= goal;
+  const summary = steps > 0 ? `${fmt(steps)} of ${fmt(goal)} steps` : 'No steps logged';
+
+  if (hit) {
+    return (
+      <span className={`${styles.slot} ${styles.stepHit}`} role="img" aria-label={`Steps: goal hit, ${summary}`} title={summary}>
+        <Check size={15} strokeWidth={2.5} />
+      </span>
+    );
+  }
+
+  return (
+    <Link
+      to={`/diary?date=${date}`}
+      className={`interactive ${styles.slot} ${styles.stepSlot} ${steps > 0 ? styles.stepPartial : ''}`}
+      aria-label={`Steps: ${summary}. Open this day to log steps`}
+      title={summary}
+    >
+      <Footprints size={15} />
+    </Link>
   );
 }

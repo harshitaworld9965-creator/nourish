@@ -9,23 +9,32 @@ import { useToast } from '../../components/ui/Toast.jsx';
 import { WorkoutCalendar } from '../../components/WorkoutCalendar/WorkoutCalendar.jsx';
 import { useWorkouts, WORKOUT_TYPES, CARDIO_TIMES } from '../../hooks/useWorkouts.js';
 import { useToday } from '../../hooks/useToday.js';
+import { useStore } from '../../store/NourishProvider.jsx';
+import { DEFAULT_STEP_GOAL } from '../../data/defaultSettings.js';
+import { stepSummaries, stepStats } from '../../utils/analytics.js';
 import { uid } from '../../utils/ids.js';
 import { addDays, startOfWeek, weekKeys, formatWeekRange, formatMedium, isValidKey, WEEKDAY_NAMES } from '../../utils/dates.js';
 import styles from './Activity.module.css';
 
+const fmtSteps = (n) => Math.round(n).toLocaleString('en-IN');
+
 export default function Activity() {
   const today = useToday();
   const w = useWorkouts();
+  const { state } = useStore();
   const toast = useToast();
   const [weekStart, setWeekStart] = useState(() => startOfWeek(today));
   const [form, setForm] = useState(null); // workout draft
   const [routineOpen, setRoutineOpen] = useState(false);
   const keys = weekKeys(weekStart);
+  const stepGoal = state.settings.stepGoal ?? DEFAULT_STEP_GOAL;
 
   const weekEntries = useMemo(
     () => w.entries.filter((e) => e.date >= keys[0] && e.date <= keys[6]),
     [w.entries, keys],
   );
+
+  const steps = stepStats(stepSummaries(state.days, keys, stepGoal));
 
   const plannedStrength = keys.filter((k) => w.planFor(k).strength).length;
   const plannedCardio = keys.filter((k) => w.planFor(k).cardio).length;
@@ -69,11 +78,21 @@ export default function Activity() {
         onDate={w.onDate}
         onQuickLog={(date, type, time) => setForm(newDraft(date, type, time))}
         onOpenDay={(date) => setForm(newDraft(date))}
+        stepsFor={(date) => state.days[date]?.steps ?? 0}
+        stepGoal={stepGoal}
       />
 
       <dl className={styles.summary}>
         <div><dt className="t-small t-muted">Strength</dt><dd><span className="t-numeral">{doneStrength}</span> of {plannedStrength} planned</dd></div>
         <div><dt className="t-small t-muted">Cardio</dt><dd><span className="t-numeral">{doneCardio}</span> of {plannedCardio} planned</dd></div>
+        <div>
+          <dt className="t-small t-muted">Step goal</dt>
+          <dd><span className="t-numeral">{steps.goalDays}</span> of 7 days</dd>
+        </div>
+        <div>
+          <dt className="t-small t-muted">Steps this week</dt>
+          <dd><span className="t-numeral">{fmtSteps(steps.total)}</span></dd>
+        </div>
         <div>
           <dt className="t-small t-muted">Total time</dt>
           <dd><span className="t-numeral">{weekEntries.reduce((a, e) => a + e.duration, 0)}</span> min</dd>
